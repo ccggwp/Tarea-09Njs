@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Estudiantes</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <h1>CRUD de Estudiantes</h1>
+    <form action="/add" method="POST">
+        <label for="nombres">Nombres:</label>
+        <input type="text" id="nombres" name="nombres" required>
+        <label for="apellidos">Apellidos:</label>
+        <input type="text" id="apellidos" name="apellidos" required>
+        <label for="codigo">Código:</label>
+        <input type="text" id="codigo" name="codigo" required>
+        <label for="ep">Escuela Profesional (EP):</label>
+        <input type="text" id="ep" name="ep" required>
+        <button type="submit">Agregar</button>
+    </form>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nombres</th>
+                <th>Apellidos</th>
+                <th>Código</th>
+                <th>EP</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% estudiantes.forEach((estudiante, index) => { %>
+                <tr>
+                    <td><%= index + 1 %></td>
+                    <td>
+                        <span class="view-mode"><%= estudiante.nombres %></span>
+                        <input class="edit-mode" type="text" name="nombres" value="<%= estudiante.nombres %>" style="display:none;">
+                    </td>
+                    <td>
+                        <span class="view-mode"><%= estudiante.apellidos %></span>
+                        <input class="edit-mode" type="text" name="apellidos" value="<%= estudiante.apellidos %>" style="display:none;">
+                    </td>
+                    <td>
+                        <span class="view-mode"><%= estudiante.codigo %></span>
+                        <input class="edit-mode" type="text" name="codigo" value="<%= estudiante.codigo %>" style="display:none;">
+                    </td>
+                    <td>
+                        <span class="view-mode"><%= estudiante.ep %></span>
+                        <input class="edit-mode" type="text" name="ep" value="<%= estudiante.ep %>" style="display:none;">
+                    </td>
+                    <td>
+                        <form action="/delete/<%= estudiante.id %>" method="POST" style="display:inline;">
+                            <button type="submit">ELIMINAR</button>
+                        </form>
+                        <button class="edit-button">EDITAR</button>
+                        <form class="edit-mode" action="/update/<%= estudiante.id %>" method="POST" style="display:none;">
+                            <input type="hidden" name="nombres" value="<%= estudiante.nombres %>">
+                            <input type="hidden" name="apellidos" value="<%= estudiante.apellidos %>">
+                            <input type="hidden" name="codigo" value="<%= estudiante.codigo %>">
+                            <input type="hidden" name="ep" value="<%= estudiante.ep %>">
+                            <button type="submit">GUARDAR</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+    <div id="notification" class="notification"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.edit-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    row.querySelectorAll('.view-mode').forEach(element => {
+                        element.style.display = 'none';
+                    });
+                    row.querySelectorAll('.edit-mode').forEach(element => {
+                        element.style.display = '';
+                    });
+                    this.style.display = 'none';
+                });
+            });
+
+            document.querySelectorAll('.edit-mode').forEach(form => {
+                form.addEventListener('submit', function() {
+                    const row = this.closest('tr');
+                    const nombres = row.querySelector('input[name="nombres"]').value;
+                    const apellidos = row.querySelector('input[name="apellidos"]').value;
+                    const codigo = row.querySelector('input[name="codigo"]').value;
+                    const ep = row.querySelector('input[name="ep"]').value;
+
+                    this.querySelector('input[name="nombres"]').value = nombres;
+                    this.querySelector('input[name="apellidos"]').value = apellidos;
+                    this.querySelector('input[name="codigo"]').value = codigo;
+                    this.querySelector('input[name="ep"]').value = ep;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
